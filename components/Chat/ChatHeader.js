@@ -9,12 +9,23 @@ const ChatHeader = (props) => {
         <View style={styles.icon}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Image
+              // source={props.profilePic}
               source={require('../../assets/icons/png/backButton.png')}
-              // style={styles.icon}
+            // style={styles.icon}
             />
           </TouchableOpacity>
         </View>
-        <View style={styles.iconImage}></View>
+        <View style={styles.iconImage}>
+          <Image
+            // style={styles.iconImage}
+            style={{width: 60,
+              height: 60,
+              borderRadius: 100 / 2,}}
+            source={props.profilePic}
+          // source={require('../../assets/icons/png/backButton.png')}
+          // style={styles.icon}
+          />
+        </View>
         <View style={styles.nameHeader}>
           <Text
             style={styles.nameText}
@@ -25,16 +36,16 @@ const ChatHeader = (props) => {
           <Text style={styles.numberText}>{props.number}</Text>
         </View>
         <TouchableOpacity style={styles.call}>
-        <Image
-          source={require('../../assets/icons/png/telephone.png')}
-          style={{height: 22, width: 22, marginTop: '20%',alignSelf: 'center'}}
+          <Image
+            source={require('../../assets/icons/png/telephone.png')}
+            style={{ height: 22, width: 22, marginTop: '20%', alignSelf: 'center' }}
           />
         </TouchableOpacity>
         <TouchableOpacity style={styles.moreOption}>
-        <Image
-          source={require('../../assets/icons/png/actions.png')}
-          style={{height: 22, width: 22,alignSelf: 'center'}}
-        />
+          <Image
+            source={require('../../assets/icons/png/actions.png')}
+            style={{ height: 22, width: 22, alignSelf: 'center' }}
+          />
         </TouchableOpacity>
       </View>
     </View>
@@ -55,7 +66,7 @@ const styles = StyleSheet.create({
     marginRight: '5%',
   },
   iconImage: {
-    backgroundColor: 'powderblue',
+    // backgroundColor: 'powderblue',
     marginTop: '7%',
     width: 60,
     height: 60,

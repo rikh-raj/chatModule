@@ -1,10 +1,12 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, {useCallback} from 'react'
 import ChatListItem from '../components/Chat/ChatListItem'
 import { NavigationContainer } from '@react-navigation/native'
 import { useEffect, useState } from "react";
+import { useFocusEffect } from '@react-navigation/native';
 import { useDispatch, useSelector } from "react-redux";
 import { getAllChatListByUserId } from '../redux/Chat/actions';
+import moment from 'moment'
 import { getAllMessageByChatId } from '../redux/Message/actions';
 
 const data = [
@@ -28,22 +30,33 @@ const data = [
 export default function Chat({ navigation }) {
 
   const chatState = useSelector((state) => state.chatState);
-
+const [privateChat,setPrivatechat]=useState(true)
 
 
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(getAllChatListByUserId('3c0b8970-46d9-11ed-9445-bdea7f855e09'));
+  // useEffect(() => {
+  //   dispatch(getAllChatListByUserId('6dddae20-5925-11ed-a555-c9afc10124e6'));
 
 
-  }, []);
+  // }, []);
+const authId= "3ac1df80-5a6e-11ed-a871-7d8265a60df7"
+  useFocusEffect(
+    useCallback(()=>{
+      if(navigation.isFocused()){
+          console.log("single chat")
+        // alert("today is true",today)
+        // console.log("before hook today", today)
+        dispatch(getAllChatListByUserId(authId,privateChat, null)) // replace with your function
+      }
+    },[dispatch,navigation.isFocused()])
+  )
   
 
 
  
 
 
-  console.log("COMPLETE RESPONSE DATA IN CHAT.JS: ", chatState.data);
+  // console.log("COMPLETE RESPONSE DATA IN CHAT.JS: ", chatState.data);
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.button}>
@@ -52,14 +65,14 @@ export default function Chat({ navigation }) {
       {chatState.data.map((item, index) => {
         return (
           <View>
-            <TouchableOpacity onPress={() => navigation.navigate('chatsingle')}>
-              <ChatListItem
-                id={item.chatId}
+            <TouchableOpacity onPress={() => navigation.navigate('chatsingle',{chat: item, authId})}>
+              <ChatListItem 
+                // id={item.chatId}
                 name={item.chatName}
                 profileUrl={item.users[0].photo}
-                lastMessage="Fine!"
-                time="12:34 PM"
-                unread="1"
+                lastMessage={item.lastMessage}
+                time={moment(item.lastMessageTime).format("hh:mm a")}
+                unread={item.unreadMessages}
                 isOnline={false}
               />
             </TouchableOpacity>

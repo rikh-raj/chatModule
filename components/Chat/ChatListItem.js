@@ -1,24 +1,35 @@
 import { StyleSheet, Text, View, Image } from 'react-native'
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useEffect } from 'react';
+import { useCallback } from 'react';
 import { getAllMessageByChatId } from '../../redux/Message/actions';
 
 
 const ChatListItem = (props) => {
-
+const navigation = useNavigation()
     const messageState = useSelector((state) => state.messageState);
 
     const dispatch = useDispatch();
 
+// console.log("first", unreadMessages)
+    // useEffect(() => {
+    //     dispatch(getAllMessageByChatId(props.id))
+    //     console.log("Display chatId", props.id)
+    //     console.log("data:", messageState.data)
+    // }, [props.id]);
 
-    useEffect(() => {
-        dispatch(getAllMessageByChatId(props.id))
-        console.log("Display chatId", props.id)
-        console.log("data:", messageState.data)
-    }, [props.id]);
-
-
+    // useFocusEffect(
+    //     useCallback(()=>{
+    //       if(navigation.isFocused()){
+    //           console.log("single chat")
+    //         // alert("today is true",today)
+    //         // console.log("before hook today", today)
+    //         dispatch(getAllMessageByChatId()); // replace with your function
+    //       }
+    //     },[dispatch,navigation.isFocused()])
+    //   )
 
     return (
         <View>
@@ -41,9 +52,12 @@ const ChatListItem = (props) => {
                 </View>
                 <View style={styles.info}>
                     <Text style={styles.time}>{props.time}</Text>
+                    {props.unread > 0 ?
                     <View style={styles.unreadView}>
                         <Text style={styles.unread}>{props.unread}</Text>
                     </View>
+                    
+                    : null}
 
                 </View>
             </View>

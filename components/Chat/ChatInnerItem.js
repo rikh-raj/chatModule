@@ -8,32 +8,59 @@ import {
 } from 'react-native';
 import React from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const ChatInnerItem = props => {
   const navigation = props.navigation;
+  // console.log(props.isSender,"ddd")
   return (
-    <View >
-      {props.receiverMessage?
-      <View style={{flexDirection: 'row'}}>
-        <View style={styles.messageImage}></View>
-        <View style={styles.message} key={props.key1}>
-          <Text style={styles.receiverUsername}>{props.receiverUsername}</Text>
-          <Text style={styles.receiverMessage}>{props.receiverMessage}</Text>
-        </View>
-      </View>:null
+    // <View style={{
+    //   justifyContent: 'center',
+    //   backgroundColor: 'pink'
+    // }}>
+    <>
+      {props.isSender ?
+        <>
+          <View style={{ flexDirection: 'row', marginBottom: '2%' }}>
+            <View style={{ flexDirection: 'column' }}>
+              <View style={styles.messageRight} key={props.key2}>
+                <Text style={styles.senderUsername}>{props.username}</Text>
+                <Text style={styles.senderMessage}>{props.message}</Text>
+              </View>
+              <View>
+                <Text style={{ alignSelf: 'flex-end', marginRight: '5%' }}>{props.time}</Text>
+              </View>
+            </View>
+            <View style={styles.messageImageRight}>
+              <Image
+                style={{ height: 35, width: 35, borderRadius: 100 / 2 }}
+                source={props.pic} />
+            </View>
+          </View>
+        </>
+        :
+        <>
+          <View style={{ flexDirection: 'row', margin: '2%' }}>
+            <View style={styles.messageImage}>
+              <Image
+                style={{ height: 35, width: 35, borderRadius: 100 / 2 }}
+                source={props.pic} />
+            </View>
+            <View style={{ flexDirection: 'column' }}>
+              <View style={styles.message} key={props.key1}>
+                <Text style={styles.receiverUsername}>{props.username}</Text>
+                <Text style={styles.receiverMessage}>{props.message}</Text>
+              </View>
+              <View>
+                <Text style={{ alignSelf: 'flex-end', marginRight: '5%' }}>{props.time}</Text>
+              </View>
+
+            </View>
+          </View>
+        </>
       }
-      {props.senderMessage? 
-      <View style={{flexDirection: 'row'}}>
-        <View style={styles.messageRight} key={props.key2}>
-          <Text style={styles.senderUsername}>{props.senderUsername}</Text>
-          <Text style={styles.senderMessage}>{props.senderMessage}</Text>
-        </View>
-        <View style={styles.messageImageRight}></View>
-      </View>
-      :null
-    }
-    </View>
+    </>
+    // {/* </View> */}
   );
 };
 
@@ -44,9 +71,9 @@ const windowHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   messageImage: {
-    backgroundColor: 'black',
-    marginLeft: '5%',
-    marginTop: '20%',
+    // backgroundColor: 'black',
+    marginLeft: '2%',
+    marginTop: '12%',
     width: 30,
     height: 30,
     alignItems: 'flex-end',
@@ -60,26 +87,24 @@ const styles = StyleSheet.create({
     padding: 5,
     // height: windowHeight / 9,
     height: 'auto',
-    width: windowWidth / 1.5,
+    width: windowWidth / 1.4,
     borderTopEndRadius: 10,
     borderBottomEndRadius: 10,
     borderTopLeftRadius: 10,
   },
   messageImageRight: {
-    backgroundColor: 'grey',
+    // backgroundColor: 'grey',
     marginLeft: '2%',
-    marginTop: '17%',
+    marginTop: '12%',
     width: 30,
     height: 30,
-    alignContent: 'flex-end',
-    alignSelf: 'flex-end',
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
     borderRadius: 100 / 2,
   },
   messageRight: {
     backgroundColor: 'black',
-    marginLeft: '15%',
+    marginLeft: '10%',
     marginTop: '5%',
     height: 'auto',
     // height: windowHeight / 9,

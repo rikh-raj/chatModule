@@ -1,6 +1,11 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, {useState, useCallback} from 'react'
 import ChatListItem from '../components/Chat/ChatListItem'
+import { useFocusEffect } from '@react-navigation/native';
+import { useDispatch, useSelector } from "react-redux";
+import { getAllChatListByUserId } from '../redux/Chat/actions';
+import moment from 'moment';
+
 const data = [
   {
     name: "Rajarshi",
@@ -20,20 +25,33 @@ const data = [
   }
 ]
 export default function Group({navigation}) {
+  const chatState = useSelector((state) => state.chatState);
+  const [groupChat,setGroupchat]=useState(true)
+  const dispatch = useDispatch()
+  useFocusEffect(
+    useCallback(()=>{
+      if(navigation.isFocused()){
+          console.log("group chat")
+        // alert("today is true",today)
+        // console.log("before hook today", today)
+        dispatch(getAllChatListByUserId('3ac1df80-5a6e-11ed-a871-7d8265a60df7',null, groupChat)) // replace with your function
+      }
+    },[dispatch,navigation.isFocused()])
+  )
   return (
     <View style={styles.container}>
        <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('groupCreation')}>
         <Text style={styles.plus}>+</Text>
       </TouchableOpacity>
-      {data.map((item, index) => {
+      {chatState.data.map((item, index) => {
         return (
           <TouchableOpacity onPress={()=>navigation.navigate('groupChat')}>
-            <ChatListItem
+            <ChatListItem 
             id={index}
-              name={item.name}
-              profileUrl={item.profileUrl}
+              name={item.chatName}
+              profileUrl={item.groupPhoto}
               lastMessage={item.lastMessage}
-              time={item.time}
+              time={moment(item.lastMessageTime).format("hh:mm a")}
               unread={item.unread} 
               isOnline = {item.isOnline}/>
          </TouchableOpacity>
