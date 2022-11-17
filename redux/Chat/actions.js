@@ -85,24 +85,3 @@ export const getAllChatListByUserId = (id, privateChat, groupChat) => {
     };
 }
 
-// export const getAllMessageByChatId = (id, chatId) => {
-//     return async (dispatch) => {
-
-//         dispatch(req());
-//         try {
-//             console.log("chat",id, chatId)
-//               const response = await axios.get(
-//                 `https://frisles.herokuapp.com/api/message/chat/${chatId}?userId=${id}`,
-//               );
-//               if (response.status) {
-//                 dispatch(MessageByChatId(response.data));
-//                 socket.emit("join chat", chatId);
-//                 console.log("message", response.data)
-//               }
-//         }catch (err) {
-//             console.log('REQUEST FAILED');
-//             console.log("errro",err.response.status);
-//             dispatch(reqFailure(err.message));
-//           }
-//     };
-// }

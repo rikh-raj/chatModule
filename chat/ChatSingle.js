@@ -4,18 +4,20 @@ import ChatInnerItem from '../components/Chat/ChatInnerItem'
 import ChatHeader from '../components/Chat/ChatHeader';
 import ImagePicker from 'react-native-image-crop-picker';
 // import { getAllMessageByChatId } from '../redux/Chat/actions'
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';
 import axios from 'axios';
 import io from 'socket.io-client'
 import moment from 'moment';
+import { err } from 'react-native-svg/lib/typescript/xml';
 var socket, selectedChatCompare;
 
 
 const ChatSingle = ({ navigation, route }) => {
   const { chat, authId } = route.params
   const dispatch = useDispatch()
+  const scrollViewRef = useRef();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
@@ -42,7 +44,7 @@ const ChatSingle = ({ navigation, route }) => {
     "userId": "3ac1df80-5a6e-11ed-a871-7d8265a60df7",
     "firstName": "Andalib",
     "lastName": "Quraishi",
-    "photo": null,
+    "photo": 'https://assets.vogue.in/photos/622f9af651da11b2e5b0b176/master/pass/7%20times%20Alia%20Bhatt%20served%20sublime%20beauty%20moments%20.jpg',
     "countryCode": "91",
     "phoneNumber": "987654321",
     "createdAt": "2022-11-02T05:21:39.705Z",
@@ -61,7 +63,7 @@ const ChatSingle = ({ navigation, route }) => {
         endPoint +
         `/api/message/chat/${chat.chatId}?userId=${authId}`,
       );
-      console.log("res", response.data)
+      // console.log("res", response.data)
       setMessages(response.data);
       setLoading(false);
 
@@ -80,45 +82,118 @@ const ChatSingle = ({ navigation, route }) => {
     // getAllMessageByChatId()
     // eslint-disable-next-line
   }, []);
-
   useEffect(() => {
     getMessagesByChatId()
+    selectedChatCompare = chat
   }, [chat.chatId])
 
+  useEffect(() => {
+    socket.on("message recieved", (newMessageRecieved) => {
+      if (
+        !selectedChatCompare || // if chat is not selected or doesn't match current chat
+        selectedChatCompare.chatId!== newMessageRecieved.chat.chatId
+      ) 
+      {
+        if (!notification.includes(newMessageRecieved)) {
+          setNotification([newMessageRecieved, ...notification]);
+          setFetchAgain(!fetchAgain);
+        }
+      } 
+      else {
+        setMessages([...messages, newMessageRecieved]);
+        console.log("new msg", newMessageRecieved)
+      }
+    });
+  },[]);
+  // console.log("time", moment().toISOString())
+// console.log("old msg", messages)
+  const typingHandler = (event) => {
+    setNewMessage(event);
+    console.log(event)
+    if (!socketConnected) return;
+
+    if (!typing) {
+      setTyping(true);
+      socket.emit("typing", chat.chatId);
+    }
+    let lastTypingTime = new Date().getTime();
+    var timerLength = 3000;
+    setTimeout(() => {
+      var timeNow = new Date().getTime();
+      var timeDiff = timeNow - lastTypingTime;
+      if (timeDiff >= timerLength && typing) {
+        socket.emit("stop typing", chat.chatId);
+        setTyping(false);
+      }
+    }, timerLength);
+  };
+  const sendMessage = async (event) => {
+    // console.log("event",event.nativeEvent)
+    if (newMessage) {
+      socket.emit("stop typing", chat.chatId);
+      try {
+        setNewMessage("");
+        const response = await axios.post(
+          endPoint +
+          `/api/message/chat/${chat.chatId}/user/${authId}`,
+          {
+            content: newMessage,
+            createdAt: moment().toISOString(),
+            firstName: user.firstName,
+            lastName: user.lastName,
+            photo: user.photo
+          },
+        );
+        console.log("re", response.data)
+        socket.emit("new message", response.data);
+        setMessages([...messages, response.data]);
+      } catch (error) {
+        console.log("error at send message", error.response.status)
+        Alert.alert("error of send message")
+      }
+    }
+  };
   // console.log(chat, authId)
   return (
     <View style={styles.container}>
       <ChatHeader
-        profilePic={{uri:chat.users[0].photo}}
+        profilePic={{ uri: chat.users[0].photo }}
         name={chat.chatName}
         number={chat.users[0].phoneNumber}
         navigation={navigation}
       />
-      <ScrollView>
-      {messages.map((item, index) => {
-        return (
-          <>
-            {/* <ScrollView> */}
+      <ScrollView ref={scrollViewRef}
+      onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}>
+        {messages.map((item, index) => {
+          return (
+            <>
               <ChatInnerItem
                 navigation={navigation}
-                // receiverUsername={item?.data?.firstName +'\b'+ item?.data?.lastName}
-                // receiverMessage={item?.data?.content}
                 isSender={item?.isSender}
-                pic={{uri: item?.data?.photo}}
-                username={item?.data?.firstName +'\b'+ item?.data?.lastName}
+                pic={{ uri: item?.data?.photo }}
+                username={item?.data?.firstName + '\b' + item?.data?.lastName}
                 message={item?.data?.content}
                 time={moment(item?.data?.createdAt).format("hh:mm a")}
               />
-            {/* </ScrollView> */}
-          </>
-        )
-      })}
+            </>
+          )
+        })}
       </ScrollView>
+      {istyping ?
+        <View>
+          <Text>typing...</Text>
+        </View>
+        :
+        null
+      }
       <View style={{ backgroundColor: 'white', width: windowWidth / 1, height: 60 }}>
         <View style={styles.inputView}>
           <TextInput style={styles.input}
             placeholderTextColor='#000'
             placeholder='Type here'
+            value={newMessage}
+            onChangeText={(e) => typingHandler(e)}
+            // onKeyPress={sendMessage}
           />
           <TouchableOpacity style={styles.emoticon}>
             <Image
@@ -131,6 +206,9 @@ const ChatSingle = ({ navigation, route }) => {
               source={require('../assets/icons/png/cameraColor.png')}
               style={{ height: 27, width: 27, marginTop: '19%', marginLeft: '7%', }}
             />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.emoticon} onPress={() => sendMessage()}>
+            <Text>Send</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -167,7 +245,7 @@ const styles = StyleSheet.create({
     height: 50,
     // marginTop: '12%',
     alignSelf: 'center',
-    width: windowWidth / 1.2,
+    width: windowWidth / 1.1,
     borderWidth: 1,
     // top: 0,
     bottom: 10,

@@ -1,9 +1,14 @@
-import {ScrollView, StyleSheet, Text, TextInput,Image,TouchableOpacity, View, Dimensions} from 'react-native';
-import React from 'react';
+import {ScrollView, StyleSheet, Text, TextInput,Image,TouchableOpacity, Alert,View, Dimensions} from 'react-native';
+import React,{useState, useEffect} from 'react';
 import ChatInnerItem from '../components/Chat/ChatInnerItem';
 import ChatHeader from '../components/Chat/ChatHeader';
 import ImagePicker from 'react-native-image-crop-picker';
-
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import io from 'socket.io-client'
+import moment from 'moment';
+var socket, selectedChatCompare;
 
 const data = [
   {
@@ -19,7 +24,16 @@ const data = [
     senderMessage: 'I am good.how are you all good?',
   },
 ];
-const GroupChat = ({navigation}) => {
+const GroupChat = ({navigation, route}) => {
+  const { group, authId } = route.params
+  const chatState = useSelector((state)=> state.chatState)
+  const dispatch = useDispatch()
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [newMessage, setNewMessage] = useState("");
+  const [socketConnected, setSocketConnected] = useState(false);
+  const [typing, setTyping] = useState(false);
+  const [istyping, setIsTyping] = useState(false);
   const launchCameraPhoto = () => {
     let options = {
         storageOptions: {
@@ -36,23 +50,75 @@ const GroupChat = ({navigation}) => {
     });
 
 }
+let user =  {
+  "userId": "3ac1df80-5a6e-11ed-a871-7d8265a60df7",
+  "firstName": "Andalib",
+  "lastName": "Quraishi",
+  "photo": "https://assets.vogue.in/photos/622f9af651da11b2e5b0b176/master/pass/7%20times%20Alia%20Bhatt%20served%20sublime%20beauty%20moments%20.jpg",
+  "countryCode": "91",
+  "phoneNumber": "987654321",
+  "createdAt": "2022-11-02T05:21:39.705Z",
+  "updatedAt": "2022-11-02T05:21:39.705Z"
+}
+var endPoint = `https://frisles.herokuapp.com`
+
+
+const getMessagesByChatId = async () => {
+  // if (!selectedChat) return;
+
+  try {
+
+    setLoading(true);
+    const response = await axios.get(
+      endPoint +
+      `/api/message/chat/${group.chatId}?userId=${authId}`,
+    );
+    console.log("res", response.data)
+    setMessages(response.data);
+    setLoading(false);
+
+    socket.emit("join chat", group.chatId);
+  } catch (error) {
+    console.log("err", error.message)
+    Alert.alert("error")
+  }
+};
+useEffect(() => {
+  socket = io(endPoint);
+  socket.emit("setup", user);
+  socket.on("connected", () => setSocketConnected(true));
+  socket.on("typing", () => setIsTyping(true));
+  socket.on("stop typing", () => setIsTyping(false));
+  // getAllMessageByChatId()
+  // eslint-disable-next-line
+}, []);
+
+useEffect(() => {
+  getMessagesByChatId()
+}, [group.chatId])
+// console.log("first",messages)
   return (
     <View style={styles.container}>
         <ChatHeader
-          name="Group Name"
-          number="+91986754321,+91986.."
+          name={group.chatName}
+          profilePic={{uri:group.groupPhoto}}
+          number={group.users.map((i)=>i.phoneNumber + ",")}
           navigation={navigation}
           onPressName={()=>navigation.navigate('groupEdit')}
         />
       <ScrollView>
-        {data.map(item => {
+        {messages.map(item => {
           return (
             <ChatInnerItem
-              receiverUsername="User name"
-              receiverMessage="Hey, there Whats Up , Hope you are doing good in your life"
-              senderUsername="User name"
-              senderMessage={item.senderMessage}
-            />
+            navigation={navigation}
+            // receiverUsername={item?.data?.firstName +'\b'+ item?.data?.lastName}
+            // receiverMessage={item?.data?.content}
+            isSender={item?.isSender}
+            pic={{uri: item?.data?.photo}}
+            username={item?.data?.firstName +'\b'+ item?.data?.lastName}
+            message={item?.data?.content}
+            time={moment(item?.data?.createdAt).format("hh:mm a")}
+          />
           );
         })}
       </ScrollView>

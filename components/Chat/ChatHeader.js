@@ -33,7 +33,7 @@ const ChatHeader = (props) => {
               props.onPressName}>
             {props.name}
           </Text>
-          <Text style={styles.numberText}>{props.number}</Text>
+          <Text style={styles.numberText} numberOfLines={1}>{props.number}</Text>
         </View>
         <TouchableOpacity style={styles.call}>
           <Image
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   numberText: {
     textAlign: 'left',
     color: '#000',
-    // width: '100%',
+    width: '90%',
     fontSize: 14,
     marginLeft: '2%',
     marginTop: '1%',

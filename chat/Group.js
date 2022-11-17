@@ -28,6 +28,7 @@ export default function Group({navigation}) {
   const chatState = useSelector((state) => state.chatState);
   const [groupChat,setGroupchat]=useState(true)
   const dispatch = useDispatch()
+const authId= "3ac1df80-5a6e-11ed-a871-7d8265a60df7"
   useFocusEffect(
     useCallback(()=>{
       if(navigation.isFocused()){
@@ -45,14 +46,14 @@ export default function Group({navigation}) {
       </TouchableOpacity>
       {chatState.data.map((item, index) => {
         return (
-          <TouchableOpacity onPress={()=>navigation.navigate('groupChat')}>
+          <TouchableOpacity onPress={()=>navigation.navigate('groupChat',{group: item, authId})}>
             <ChatListItem 
             id={index}
               name={item.chatName}
               profileUrl={item.groupPhoto}
               lastMessage={item.lastMessage}
               time={moment(item.lastMessageTime).format("hh:mm a")}
-              unread={item.unread} 
+              unread={item.unreadMessages} 
               isOnline = {item.isOnline}/>
          </TouchableOpacity>
         )

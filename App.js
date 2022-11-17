@@ -21,6 +21,7 @@ import GroupCreation from './chat/GroupCreation';
 import EditGroup from './chat/EditGroup'
 import CallNow from './chat/CallNow';
 import GroupChat from './chat/GroupChat';
+import AllContacts from './chat/AllContacts';
 
 const Stack = createStackNavigator();
 
@@ -45,6 +46,7 @@ const App = () => {
          <Stack.Screen name="groupChat" component={GroupChat} />
        <Stack.Screen name="groupEdit" component={EditGroup} />
        <Stack.Screen name="callNow" component={CallNow} />  
+       <Stack.Screen name='allContacts' component={AllContacts}/>
       </Stack.Navigator>
     </NavigationContainer>
     </Provider>
