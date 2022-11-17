@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, FlatList } from 'react-native'
-import React,{useState}from 'react'
+import React,{useState, useEffect}from 'react'
 import Contacts from 'react-native-contacts';
 import ContactList from '../components/Chat/ContactList';
 

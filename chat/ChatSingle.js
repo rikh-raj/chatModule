@@ -63,7 +63,7 @@ const ChatSingle = ({ navigation, route }) => {
         endPoint +
         `/api/message/chat/${chat.chatId}?userId=${authId}`,
       );
-      // console.log("res", response.data)
+      console.log("yo yo", response.data)
       setMessages(response.data);
       setLoading(false);
 
@@ -81,30 +81,28 @@ const ChatSingle = ({ navigation, route }) => {
     socket.on("stop typing", () => setIsTyping(false));
     // getAllMessageByChatId()
     // eslint-disable-next-line
-  }, []);
+  }, [socket]);
   useEffect(() => {
     getMessagesByChatId()
     selectedChatCompare = chat
   }, [chat.chatId])
 
   useEffect(() => {
+    console.log("new msg",selectedChatCompare)
     socket.on("message recieved", (newMessageRecieved) => {
       if (
-        !selectedChatCompare || // if chat is not selected or doesn't match current chat
-        selectedChatCompare.chatId!== newMessageRecieved.chat.chatId
+        // !selectedChatCompare || // if chat is not selected or doesn't match current chat
+        // selectedChatCompare.chatId !== newMessageRecieved.chatId
+        newMessageRecieved
       ) 
       {
-        if (!notification.includes(newMessageRecieved)) {
-          setNotification([newMessageRecieved, ...notification]);
-          setFetchAgain(!fetchAgain);
-        }
-      } 
-      else {
-        setMessages([...messages, newMessageRecieved]);
-        console.log("new msg", newMessageRecieved)
+        
+        // setMessages([...messages,newMessageRecieved]);
+        messages.push(newMessageRecieved)
       }
+      console.log("new msg inside ", newMessageRecieved)
     });
-  },[]);
+  },[messages,socket]);
   // console.log("time", moment().toISOString())
 // console.log("old msg", messages)
   const typingHandler = (event) => {
@@ -133,7 +131,7 @@ const ChatSingle = ({ navigation, route }) => {
       socket.emit("stop typing", chat.chatId);
       try {
         setNewMessage("");
-        const response = await axios.post(
+        await axios.post(
           endPoint +
           `/api/message/chat/${chat.chatId}/user/${authId}`,
           {
@@ -143,10 +141,19 @@ const ChatSingle = ({ navigation, route }) => {
             lastName: user.lastName,
             photo: user.photo
           },
-        );
-        console.log("re", response.data)
-        socket.emit("new message", response.data);
-        setMessages([...messages, response.data]);
+        ).then(async(response) => {
+          if(response.status==200){
+            // console.log("re", messages)
+            // console.log(response.data)
+            await socket.emit("new message", response.data);
+
+            await messages.push(response.data)
+            
+          }
+        })
+        
+        
+        // setMessages([...messages, response.data]);
       } catch (error) {
         console.log("error at send message", error.response.status)
         Alert.alert("error of send message")
@@ -168,6 +175,7 @@ const ChatSingle = ({ navigation, route }) => {
           return (
             <>
               <ChatInnerItem
+              send={item?.data?.userId}
                 navigation={navigation}
                 isSender={item?.isSender}
                 pic={{ uri: item?.data?.photo }}
