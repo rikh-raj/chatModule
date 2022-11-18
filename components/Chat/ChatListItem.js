@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
         color: '#ABABAB'
     },
     unreadView: {
-        backgroundColor: 'black',
+        backgroundColor: '#5d6aff',
         width: 30,
         height: 30,
         borderRadius: 30 / 2,

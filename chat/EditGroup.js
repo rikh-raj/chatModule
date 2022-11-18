@@ -8,8 +8,11 @@ import {
   FlatList,
   Dimensions,
   ScrollView,
+  ImageBackground
+
 } from 'react-native';
 import React, { useState } from 'react';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import SearchBar from 'react-native-dynamic-search-bar';
 
 const data = [
@@ -45,6 +48,22 @@ const data = [
     number: '9182734650',
     admin: true,
   },
+  {
+    id: 5,
+    image:
+      'https://img.freepik.com/free-photo/pleasant-looking-serious-man-stands-profile-has-confident-expression-wears-casual-white-t-shirt_273609-16959.jpg?w=2000',
+    name: 'Vikas',
+    number: '9182734650',
+    admin: true,
+  },
+  {
+    id: 6,
+    image:
+      'https://img.freepik.com/free-photo/pleasant-looking-serious-man-stands-profile-has-confident-expression-wears-casual-white-t-shirt_273609-16959.jpg?w=2000',
+    name: 'Vikas',
+    number: '9182734650',
+    admin: true,
+  },
 ];
 
 export default function EditGroup({ navigation }) {
@@ -54,7 +73,11 @@ export default function EditGroup({ navigation }) {
   return (
     <View style={styles.container}>
       <ScrollView>
-        <ScrollView>
+        {/* <ScrollView> */}
+                 <ImageBackground
+                        source={require('../assets/images/home-top-bg.png')}
+                        resizeMode="cover"
+                        style={styles.topContainer}>
           <View style={styles.header}>
             <View style={styles.icon}>
               <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -81,6 +104,7 @@ export default function EditGroup({ navigation }) {
           <View>
             <Text style={styles.groupNo}>Group.2 participant</Text>
           </View>
+          </ImageBackground>
           <View style={{ flexDirection: 'row' }}>
             <View>
               <SearchBar
@@ -95,7 +119,7 @@ export default function EditGroup({ navigation }) {
                 marginTop: '7%',
                 height: 45,
                 width: 45,
-                backgroundColor: '#000',
+                backgroundColor: '#5d6aff',
                 elevation: 5,
                 shadowColor: 'grey',
                 borderRadius: 100 / 2,
@@ -111,7 +135,7 @@ export default function EditGroup({ navigation }) {
             <View style={{ flexDirection: 'row' }}>
               <Text style={styles.message}>Mute Notification</Text>
               <Switch
-                trackColor={{ false: "#767577", true: "#000" }}
+                trackColor={{ false: "#767577", true: "#5d6aff" }}
                 thumbColor={isEnabled ? "#fff" : "#fff"}
                 style={{
                   marginLeft: '30%'
@@ -125,21 +149,27 @@ export default function EditGroup({ navigation }) {
           <View style={styles.elevationView}>
             <View style={{ flexDirection: 'row' }}>
               <Text style={styles.message}>Group Call</Text>
-              <TouchableOpacity style={styles.call} >
-                <Image
-                  source={require('../assets/icons/png/telephone.png')}
-                  style={{ height: 20, width: 20, marginTop: '20%', alignSelf: 'center' }}
-                />
-              </TouchableOpacity>
+              <TouchableOpacity style={styles.call}>
+            <Image
+              source={require('../assets/icons/png/call-icon.png')}
+              style={{
+                height: 35,
+                width: 35,
+                alignSelf: 'center',
+              }}
+            />
+          </TouchableOpacity>
             </View>
           </View>
           <View style={styles.elevationView2}>
             <FlatList
-              style={{ flex: 1, padding: 0 }}
+              // style={{ flex: 1 }}
               data={data}
               keyExtractor={item => item?.id}
               renderItem={({ item }) => {
                 return (
+                  <View>
+                    {/* <ScrollView> */}
                   <View
                     style={{
                       flex: 1,
@@ -198,11 +228,13 @@ export default function EditGroup({ navigation }) {
                       </View>
                     </View>
                   </View>
+                  {/* </ScrollView> */}
+                  </View>
                 );
               }}
             />
           </View>
-        </ScrollView>
+        {/* </ScrollView> */}
         <View style={styles.elevationView2}>
           <TouchableOpacity style={{
             borderBottomColor: '#cacaca',
@@ -228,22 +260,34 @@ export default function EditGroup({ navigation }) {
           </TouchableOpacity>
         </View>
         <TouchableOpacity style={{
-          backgroundColor: '#000',
+          backgroundColor: '#ff8b77',
           width: '85%',
           borderRadius: 10,
           marginBottom: '5%',
           marginLeft: '5%',
           marginRight: '5%',
+          justifyContent: 'flex-start',
           alignSelf: 'center',
-          padding: 15
+          alignContent: 'center',
+          alignItems: 'center',
+          padding: 15,
+          flexDirection: 'row'
         }}>
+          <Ionicons name='exit-outline' size={24} color='#fff' style={{
+            alignSelf: 'center',
+            justifyContent: 'center',
+            alignContent: 'center',
+            width: '20%',
+            marginLeft: '25%'
+          }}/>
           <Text style={{
-            textAlign: 'center',
+            textAlign: 'left',
             color: '#fff',
             fontWeight: '500'
           }}>Exit Group</Text>
         </TouchableOpacity>
       </ScrollView>
+    
     </View>
   );
 }
@@ -254,7 +298,7 @@ const windowHeight = Dimensions.get('window').height;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#ebecff',
   },
   header: {
     flexDirection: 'row',
@@ -354,7 +398,7 @@ const styles = StyleSheet.create({
     color: '#000'
   },
   call: {
-    backgroundColor: 'black',
+    // backgroundColor: 'black',
     marginLeft: '30%',
     width: '50%',
     // marginTop: '9%',
@@ -362,4 +406,10 @@ const styles = StyleSheet.create({
     height: 35,
     borderRadius: 100 / 2,
   },
+  topContainer:{
+    flex:1,
+    // backgroundColor: 'pink',
+    width: windowWidth/1,
+    height: windowHeight/3.7
+},
 });

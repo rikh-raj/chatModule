@@ -8,6 +8,7 @@ import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';
 import axios from 'axios';
+import Feather from 'react-native-vector-icons/Feather' 
 import io from 'socket.io-client'
 import moment from 'moment';
 import { err } from 'react-native-svg/lib/typescript/xml';
@@ -187,7 +188,7 @@ const ChatSingle = ({ navigation, route }) => {
           )
         })}
       </ScrollView>
-      {istyping ?
+      {typing?
         <View>
           <Text>typing...</Text>
         </View>
@@ -206,17 +207,23 @@ const ChatSingle = ({ navigation, route }) => {
           <TouchableOpacity style={styles.emoticon}>
             <Image
               source={require('../assets/icons/png/smile.png')}
-              style={{ height: 25, width: 25, marginTop: '19%', marginLeft: '7%', }}
+              style={{ height: 22, width: 22, 
+                // marginTop: '19%', marginLeft: '5%', 
+              }}
             />
           </TouchableOpacity>
           <TouchableOpacity style={styles.emoticon} onPress={() => launchCameraPhoto()}>
             <Image
               source={require('../assets/icons/png/cameraColor.png')}
-              style={{ height: 27, width: 27, marginTop: '19%', marginLeft: '7%', }}
+              style={{ height: 24, width: 24,
+                //  marginTop: '19%', marginLeft: '5%', 
+                }}
             />
           </TouchableOpacity>
           <TouchableOpacity style={styles.emoticon} onPress={() => sendMessage()}>
-            <Text>Send</Text>
+            <Feather name='send' size={22} color='#5d6afe' 
+            // style={styles.emoticon} onPress={()=> sendMessage()}
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -261,7 +268,7 @@ const styles = StyleSheet.create({
     // marginBottom: '10%',
     // marginRight: '10%',
     borderRadius: 10,
-    borderColor: 'blue',
+    borderColor: '#5d6afe',
     backgroundColor: '#EDF0FE',
     // padding: 10,
     position: 'absolute',
@@ -270,10 +277,10 @@ const styles = StyleSheet.create({
     // backgroundColor: 'black',
     // borderColor: 'blue',
     // borderWidth: 1,
-    marginLeft: '2%',
+    marginLeft: '1%',
     marginTop: '3%',
-    width: 27,
-    height: 27,
+    width: 26,
+    height: 26,
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
     borderRadius: 100 / 2,

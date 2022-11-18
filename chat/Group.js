@@ -6,24 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllChatListByUserId } from '../redux/Chat/actions';
 import moment from 'moment';
 
-const data = [
-  {
-    name: "Rajarshi",
-    profileUrl: "https://raw.githubusercontent.com/AboutReact/sampleresource/master/old_logo.png",
-    lastMessage: "This is Okay!",
-    time: "12:34 PM",
-    unread: 3,
-    isOnline:false
-  },
-  {
-    name: "Krishna",
-    profileUrl: "https://raw.githubusercontent.com/AboutReact/sampleresource/master/old_logo.png",
-    lastMessage: "Fine!",
-    time: "12:34 PM",
-    unread: 15,
-    isOnline:true
-  }
-]
 export default function Group({navigation}) {
   const chatState = useSelector((state) => state.chatState);
   const [groupChat,setGroupchat]=useState(true)
@@ -73,7 +55,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 50,
     right: 40,
-    backgroundColor: 'black',
+    backgroundColor: '#5d6aff',
         width: 60,
         height: 60,
         borderRadius: 45,

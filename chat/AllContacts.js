@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList } from 'react-native'
+import { StyleSheet, Text, View, FlatList, PermissionsAndroid, Platform, TextInput } from 'react-native'
 import React,{useState, useEffect}from 'react'
 import Contacts from 'react-native-contacts';
 import ContactList from '../components/Chat/ContactList';
@@ -6,76 +6,97 @@ import ContactList from '../components/Chat/ContactList';
 const AllContacts = ({contact}) => {
     const [contacts, setContacts] = useState([]);
     useEffect(() => {
-      Contacts.getAll().then(contacts => {
-        setContacts(contacts);
-      });
+      if (Platform.OS === 'android') {
+        PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
+            title: 'Contacts',
+            message: 'This app would like to view your contacts.',
+          }).then(() => {
+            loadContacts();
+          }
+        );
+      } else {
+        loadContacts();
+      }
     }, []);
-    const keyExtractor = (item, idx) => {
-        return item?.recordID?.toString() || idx.toString();
-      };
-      const renderItem = ({item, index}) => {
-        return <ContactList contact={console.log("contacts", item)} />;
-      };
+    const loadContacts = () => {
+      Contacts.getAll()
+        .then(contacts => {
+          contacts.sort(
+            (a, b) => 
+            a.givenName.toLowerCase() > b.givenName.toLowerCase(),
+          );
+          setContacts(contacts);
+        })
+        .catch(e => {
+          alert('Permission to access contacts was denied');
+          console.warn('Permission to access contacts was denied');
+        });
+    };
+    const search = (text) => {
+      const phoneNumberRegex = 
+        /\b[\+]?[(]?[0-9]{2,6}[)]?[-\s\.]?[-\s\/\.0-9]{3,15}\b/m;
+      if (text === '' || text === null) {
+        loadContacts();
+      } else if (phoneNumberRegex.test(text)) {
+        Contacts.getContactsByPhoneNumber(text).then(contacts => {
+          contacts.sort(
+            (a, b) => 
+            a.givenName.toLowerCase() > b.givenName.toLowerCase(),
+          );
+          setContacts(contacts);
+          console.log('contacts', contacts);
+        });
+      } else {
+        Contacts.getContactsMatchingString(text).then(contacts => {
+          contacts.sort(
+            (a, b) => 
+            a.givenName.toLowerCase() > b.givenName.toLowerCase(),
+          );
+          setContacts(contacts);
+          console.log('contacts', contacts);
+        });
+      }
+    };
+    const openContact = (contact) => {
+      console.log(JSON.stringify(contact));
+      Contacts.openExistingContact(contact);
+    };
   return (
     <View style={styles.container}>
+      <TextInput
+          onChangeText={search}
+          placeholderTextColor='#000'
+          se
+          placeholder="Search"
+          style={styles.searchBar}
+        />
      <FlatList
-      data={contacts}
-      renderItem={renderItem}
-      keyExtractor={keyExtractor}
-      style={styles.list}
-    />
+          data={contacts}
+          renderItem={(contact) => {
+            return (
+              <ContactList
+                key={contact.item.recordID}
+                item={contact.item}
+                onPress={openContact}
+              />
+            );
+          }}
+          keyExtractor={(item) => item.recordID}
+        />
     </View>
   )
-    // return(
-//     <View style={styles.contactCon}>
-//     <View style={styles.imgCon}>
-//       <View style={styles.placeholder}>
-//         <Text style={styles.txt}>{contact?.givenName[0]}</Text>
-//       </View>
-//     </View>
-//     <View style={styles.contactDat}>
-//       <Text style={styles.name}>
-//         {contact?.givenName} {contact?.middleName && contact.middleName + ' '}
-//         {contact?.familyName}
-//       </Text>
-//       <Text style={styles.phoneNumber}>
-//         {contact?.phoneNumbers[0]?.number}
-//       </Text>
-//     </View>
-//   </View>
-// )
 };
 const styles = StyleSheet.create({
-contactCon: {
-  flex: 1,
-  flexDirection: 'row',
-  padding: 5,
-  borderBottomWidth: 0.5,
-  borderBottomColor: '#d9d9d9',
+container: {
+  flex:1,
+  backgroundColor: '#fff'
 },
-imgCon: {},
-placeholder: {
-  width: 55,
-  height: 55,
-  borderRadius: 30,
-  overflow: 'hidden',
-  backgroundColor: '#d9d9d9',
-  alignItems: 'center',
-  justifyContent: 'center',
-},
-contactDat: {
-  flex: 1,
-  justifyContent: 'center',
-  paddingLeft: 5,
-},
-txt: {
-  fontSize: 18,
-},
-name: {
-  fontSize: 16,
-},
-phoneNumber: {
-  color: '#888',
+searchBar: {
+  backgroundColor: '#f0eded',
+  paddingHorizontal: 30,
+  color: '#000',
+  paddingVertical: Platform.OS === 'android' ? undefined : 15,
 },
 });
 

@@ -7,18 +7,11 @@ export default function CallNow({navigation}) {
   return (
     <View style={styles.container}>
       <Image
-        key={'blurryImage'}
+        blurRadius={15}
         source={{
           uri: 'https://cdn.create.vista.com/api/media/small/142981027/stock-photo-stylish-handsome-man',
         }}
         style={styles.absolute}
-      />
-      <Text style={styles.absolute}>Hi, I am some blurred text</Text>
-      <BlurView
-        style={styles.absolute}
-        blurType="light"
-        blurAmount={25}
-        reducedTransparencyFallbackColor="white"
       />
       <Image
         style={styles.imageView}

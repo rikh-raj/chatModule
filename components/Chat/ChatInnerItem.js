@@ -19,14 +19,14 @@ const ChatInnerItem = props => {
     <View>
       {props.send===authId?
         <>
-          <View style={{ flexDirection: 'row', marginBottom: '2%' }}>
+          <View style={{ flexDirection: 'row', marginBottom: '1%' }}>
             <View style={{ flexDirection: 'column' }}>
               <View style={styles.messageRight} key={props.key2}>
                 <Text style={styles.senderUsername}>{props.username}</Text>
                 <Text style={styles.senderMessage}>{props.message}</Text>
               </View>
               <View>
-                <Text style={{ alignSelf: 'flex-end', marginRight: '5%' }}>{props.time}</Text>
+                <Text style={{ alignSelf: 'flex-end', marginRight: '5%',color: 'grey' }}>{props.time}</Text>
               </View>
             </View>
             <View style={styles.messageImageRight}>
@@ -38,7 +38,7 @@ const ChatInnerItem = props => {
         </>
         :
         <>
-          <View style={{ flexDirection: 'row', margin: '2%' }}>
+          <View style={{ flexDirection: 'row', marginBottom: '2%', marginRight: '2%' }}>
             <View style={styles.messageImage}>
               <Image
                 style={{ height: 35, width: 35, borderRadius: 100 / 2 }}
@@ -50,7 +50,7 @@ const ChatInnerItem = props => {
                 <Text style={styles.receiverMessage}>{props.message}</Text>
               </View>
               <View>
-                <Text style={{ alignSelf: 'flex-end', marginRight: '5%' }}>{props.time}</Text>
+                <Text style={{ alignSelf: 'flex-end', marginRight: '5%', color: 'grey' }}>{props.time}</Text>
               </View>
 
             </View>
@@ -78,16 +78,16 @@ const styles = StyleSheet.create({
     borderRadius: 100 / 2,
   },
   message: {
-    backgroundColor: '#cacaca',
+    backgroundColor: '#dbdbdb',
     marginLeft: '2%',
     marginTop: '3%',
     padding: 5,
     // height: windowHeight / 9,
     height: 'auto',
     width: windowWidth / 1.4,
-    borderTopEndRadius: 10,
-    borderBottomEndRadius: 10,
-    borderTopLeftRadius: 10,
+    borderTopEndRadius: 20,
+    borderBottomEndRadius: 20,
+    borderTopLeftRadius: 20,
   },
   messageImageRight: {
     // backgroundColor: 'grey',
@@ -100,17 +100,17 @@ const styles = StyleSheet.create({
     borderRadius: 100 / 2,
   },
   messageRight: {
-    backgroundColor: 'black',
+    backgroundColor: '#5d6afe',
     marginLeft: '10%',
     marginTop: '5%',
     height: 'auto',
     // height: windowHeight / 9,
     width: windowWidth / 1.5,
-    borderTopEndRadius: 10,
+    borderTopEndRadius: 20,
     padding: 5,
     // borderBottomEndRadius: 10,
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
   },
   receiverUsername: {
     textAlign: 'left',
