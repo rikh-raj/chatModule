@@ -41,8 +41,6 @@ const messageReducer = (state = initialState, action) => {
                 loading: false,
             };
         }
-
-
         case MESSAGE_FAILURE: {
             return {
                 ...state,

@@ -2,9 +2,13 @@ import { StyleSheet, Text, View, FlatList, PermissionsAndroid, Platform, TextInp
 import React,{useState, useEffect}from 'react'
 import Contacts from 'react-native-contacts';
 import ContactList from '../components/Chat/ContactList';
+import { useDispatch } from 'react-redux';
+import { getContact } from '../redux/Chat/actions';
 
 const AllContacts = ({contact}) => {
+  const [data, setData] =  useState([])
     const [contacts, setContacts] = useState([]);
+    const [phone, setPhone]= useState([])
     useEffect(() => {
       if (Platform.OS === 'android') {
         PermissionsAndroid.request(
@@ -26,13 +30,15 @@ const AllContacts = ({contact}) => {
             (a, b) => 
             a.givenName.toLowerCase() > b.givenName.toLowerCase(),
           );
-          setContacts(contacts);
+          setData(contacts)
+          setContacts(contacts.map((i)=>i.phoneNumbers.map((p)=>p.number)));
         })
         .catch(e => {
           alert('Permission to access contacts was denied');
           console.warn('Permission to access contacts was denied');
         });
     };
+    // console.log("contact 37", contacts, "sp", phone)
     const search = (text) => {
       const phoneNumberRegex = 
         /\b[\+]?[(]?[0-9]{2,6}[)]?[-\s\.]?[-\s\/\.0-9]{3,15}\b/m;
@@ -62,6 +68,18 @@ const AllContacts = ({contact}) => {
       console.log(JSON.stringify(contact));
       Contacts.openExistingContact(contact);
     };
+    let arr = []
+    for (let i = 0; i < contacts.length; i++) {
+      const element = contacts[i];
+      let value = (element[0]||'').replace(/\D/g, '').slice(-10);
+      arr.push(value)
+    // console.log("arr", arr, value)
+    }
+    // console.log("arr", arr.length, contacts.length)
+    const  dispatch = useDispatch()
+    useEffect(()=>{
+    dispatch(getContact(arr))
+    }, [arr])
   return (
     <View style={styles.container}>
       <TextInput
@@ -72,7 +90,7 @@ const AllContacts = ({contact}) => {
           style={styles.searchBar}
         />
      <FlatList
-          data={contacts}
+          data={data}
           renderItem={(contact) => {
             return (
               <ContactList

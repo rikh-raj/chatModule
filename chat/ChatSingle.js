@@ -1,4 +1,5 @@
-import { ScrollView, StyleSheet, Text, View, Image, TextInput, Dimensions, TouchableOpacity, Alert } from 'react-native'
+import { ScrollView, StyleSheet, Text, View, Image, TextInput, Modal,
+  Dimensions, TouchableOpacity, Alert } from 'react-native'
 import React from 'react'
 import ChatInnerItem from '../components/Chat/ChatInnerItem'
 import ChatHeader from '../components/Chat/ChatHeader';
@@ -11,7 +12,7 @@ import axios from 'axios';
 import Feather from 'react-native-vector-icons/Feather' 
 import io from 'socket.io-client'
 import moment from 'moment';
-import { err } from 'react-native-svg/lib/typescript/xml';
+// import EmojiBoard from 'react-native-emoji-board'
 var socket, selectedChatCompare;
 
 
@@ -161,6 +162,10 @@ const ChatSingle = ({ navigation, route }) => {
       }
     }
   };
+  const [show, setShow] = useState(false);
+  const onClick = emoji => {
+      console.log(emoji);
+  };
   // console.log(chat, authId)
   return (
     <View style={styles.container}>
@@ -204,7 +209,7 @@ const ChatSingle = ({ navigation, route }) => {
             onChangeText={(e) => typingHandler(e)}
             // onKeyPress={sendMessage}
           />
-          <TouchableOpacity style={styles.emoticon}>
+          <TouchableOpacity style={styles.emoticon} onPress={() => setShow(!show)}>
             <Image
               source={require('../assets/icons/png/smile.png')}
               style={{ height: 22, width: 22, 
@@ -212,6 +217,7 @@ const ChatSingle = ({ navigation, route }) => {
               }}
             />
           </TouchableOpacity>
+            {/* <EmojiBoard showBoard={show} onClick={onClick} containerStyle={{backgroundColor: 'red'}}/> */}
           <TouchableOpacity style={styles.emoticon} onPress={() => launchCameraPhoto()}>
             <Image
               source={require('../assets/icons/png/cameraColor.png')}
@@ -284,5 +290,32 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
     borderRadius: 100 / 2,
+  },
+  modalView: {
+    marginTop: 30,
+    // backgroundColor: "pink",
+    paddingHorizontal: 30,
+    borderRadius: 40,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    backgroundColor: 'white',
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    alignSelf: 'center',
+    marginVertical: 20,
+    paddingVertical: 50,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 25,
+    // backgroundColor: "grey",
   },
 })

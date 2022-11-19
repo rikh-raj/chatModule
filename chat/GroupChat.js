@@ -8,6 +8,7 @@ import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import io from 'socket.io-client'
 import moment from 'moment';
+import Feather from 'react-native-vector-icons/Feather'
 var socket, selectedChatCompare;
 
 const data = [
@@ -140,6 +141,11 @@ useEffect(() => {
           style={{height: 27, width: 27, marginTop: '19%',marginLeft: '7%',}}
           />
             </TouchableOpacity>
+            <TouchableOpacity style={styles.emoticon} onPress={() =>console.log("object")}>
+            <Feather name='send' size={22} color='#5d6afe' 
+            // style={styles.emoticon} onPress={()=> sendMessage()}
+            />
+          </TouchableOpacity>
         </View>
         </View>
     </View>
@@ -171,21 +177,20 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   inputView: {
-    flexDirection:'row',
+    flexDirection: 'row',
     height: 50,
     // marginTop: '12%',
     alignSelf: 'center',
-    width: windowWidth/1.2,
+    width: windowWidth / 1.1,
     borderWidth: 1,
+    // top: 0,
+    bottom: 10,
     // marginLeft: '10%',
     // marginBottom: '10%',
     // marginRight: '10%',
-    // top: 0,
-    bottom: 5,
-    // marginBottom: '1%',
     borderRadius: 10,
-    borderColor: 'blue',
-    backgroundColor: '#e6f2ff',
+    borderColor: '#5d6afe',
+    backgroundColor: '#EDF0FE',
     // padding: 10,
     position: 'absolute',
   },
@@ -193,12 +198,12 @@ const styles = StyleSheet.create({
     // backgroundColor: 'black',
     // borderColor: 'blue',
     // borderWidth: 1,
-    marginLeft: '2%',
-    marginTop: '3%',
-    width: 27,
-    height: 27,
-    alignItems: 'flex-end',
-    justifyContent: 'flex-end',
-    borderRadius: 100 / 2,
-  },
+      marginLeft: '1%',
+      marginTop: '3%',
+      width: 26,
+      height: 26,
+      alignItems: 'flex-end',
+      justifyContent: 'flex-end',
+      borderRadius: 100 / 2,
+    },
 });

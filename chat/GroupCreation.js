@@ -8,6 +8,8 @@ import {
   TextInput,
   FlatList,
   ImageBackground,
+  PermissionsAndroid,
+  Platform,
   ActivityIndicator,
 } from 'react-native';
 import React from 'react';
@@ -15,55 +17,65 @@ import {useState, useEffect} from 'react';
 import SearchBar from 'react-native-dynamic-search-bar';
 import {ScrollView} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
+import {useDispatch, useSelector} from 'react-redux';
+import {getContact, groupCreate} from '../redux/Chat/actions';
+import Contacts from 'react-native-contacts';
+import { ar, fi } from 'date-fns/locale';
 
-const data = [
-  {
-    id: 1,
-    image:
-      'https://img.freepik.com/free-photo/pleasant-looking-serious-man-stands-profile-has-confident-expression-wears-casual-white-t-shirt_273609-16959.jpg?w=2000',
-    name: 'Tushar',
-    number: '9182734650',
-    selected: true,
-  },
-  {
-    id: 2,
-    image:
-      'https://img.freepik.com/free-photo/pleasant-looking-serious-man-stands-profile-has-confident-expression-wears-casual-white-t-shirt_273609-16959.jpg?w=2000',
-    name: 'Vivan',
-    number: '9182734650',
-    selected: false,
-  },
-  {
-    id: 3,
-    image:
-      'https://img.freepik.com/free-photo/pleasant-looking-serious-man-stands-profile-has-confident-expression-wears-casual-white-t-shirt_273609-16959.jpg?w=2000',
-    name: 'Nishat',
-    number: '9182734650',
-    selected: false,
-  },
-  {
-    id: 4,
-    image:
-      'https://img.freepik.com/free-photo/pleasant-looking-serious-man-stands-profile-has-confident-expression-wears-casual-white-t-shirt_273609-16959.jpg?w=2000',
-    name: 'Vikas',
-    number: '9182734650',
-    selected: true,
-  },
-];
 const GroupCreation = ({navigation}) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
-  const [selectedName, setSelectedName] = useState([]);
-  // const [isLoading, setIsLoading] = useState(true);
-  // console.log("initial", selected)
+  const chatState = useSelector(state => state.chatState);
+  const [res, setRes] = useState(chatState.contacts);
+  const [groupName, setGroupName] = useState('')
+  const [selectedName, setSelectedName] = useState(['3ac1df80-5a6e-11ed-a871-7d8265a60df7']);
+  const [filteredData, setFilteredData] = useState(chatState.contacts);
+  const [serachText, setSearchText] = useState('');
+  const [name, setName] = useState([])
+  const dispatch = useDispatch()
   const handleOnPress = item => {
-    if (selectedName.includes(item?.id)) {
-      setSelectedName(selectedName.filter(value => value !== item?.id));
-    } else {
-      setSelectedName([...new Set([...selectedName, item?.id])]);
+    if (selectedName.includes(item)) {
+      setSelectedName(selectedName.filter(value => value !== item));
     }
   };
-  // console.log('changed', selected);
+  const handleOnChangeText = text => {
+    // ? Visible the spinner
+    if (text) {
+      // Inserted text is not blank
+      // Filter the masterDataSource and update FilteredDataSource
+      const newData = res.filter(function (item) {
+        // Applying filter for the inserted text in search bar
+        const itemData = item.firstName
+          ? item.firstName.toUpperCase()
+          : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setFilteredData(newData);
+      setSearchText(text);
+    } else {
+      // Inserted text is blank
+      // Update FilteredDataSource with masterDataSource
+      setFilteredData(res);
+      setSearchText(text);
+    }
+    console.log('filter data', filteredData);
+    console.log('search ', serachText);
 
+    // console.log("arr", arr.length, contacts.length)
+    // ? After you've done to implement your use-case
+    // ? Do not forget to set false to spinner's visibility
+  };
+  const clearFilter = text => {
+    if (text) {
+      return data;
+    }
+  };
+  const onSubmit = ()=>{
+    dispatch(groupCreate(groupName,selectedName))
+  }
+
+  console.log('changed', selectedName);
+  // console.log('chatstate', chatState.contacts);
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -104,10 +116,14 @@ const GroupCreation = ({navigation}) => {
             style={styles.input}
             placeholder="Enter group name"
             placeholderTextColor="#cacaca"
+            value={groupName}
+            onChangeText={(e)=>setGroupName(e)}
           />
         </View>
         <View>
-          <Text style={styles.groupNo}>Group.2 participant</Text>
+          <Text style={styles.groupNo}>
+            Group.{selectedName.length}participant
+          </Text>
         </View>
         <View style={{backgroundColor: '#cccef3', marginTop: '10%'}}>
           <View>
@@ -118,18 +134,22 @@ const GroupCreation = ({navigation}) => {
               placeholder="Search here"
               onPress={() => alert('onPress')}
               style={styles.searchbar}
-              onChangeText={text => console.log(text)}
+              onClearPress={() => handleOnChangeText('')}
+              onChangeText={val => handleOnChangeText(val)}
             />
           </View>
           <View>
-            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            {selectedName.map(item => {
-              return (
-                <View>
+            <ScrollView
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}>
+              {selectedName.map(item => {
+                return (
+                  <View>
                     <View style={styles.selectName}>
                       <Text style={styles.selectText}>{item}</Text>
                       <TouchableOpacity
-                        style={{ alignSelf: 'center'}}>
+                        onPress={() => handleOnPress(item)}
+                        style={{alignSelf: 'center'}}>
                         <Image
                           source={require('../assets/icons/png/wrong.png')}
                           style={{
@@ -142,19 +162,14 @@ const GroupCreation = ({navigation}) => {
                         />
                       </TouchableOpacity>
                     </View>
-                </View>
-              );
-            })}
+                  </View>
+                );
+              })}
             </ScrollView>
           </View>
-          {/* {isLoading ? (
-        <ActivityIndicator />
-      ) : ( */}
-          {/* <View style={{height: windowHeight/1.6}}> */}
           <FlatList
-            // style={{backgroundColor: 'red' }}
-            data={data}
-            keyExtractor={item => item?.id}
+            data={filteredData}
+            keyExtractor={item => item?.userId}
             renderItem={({item}) => {
               return (
                 <View>
@@ -174,8 +189,8 @@ const GroupCreation = ({navigation}) => {
                       <View>
                         <Image
                           source={{
-                            uri: item?.image
-                              ? item?.image
+                            uri: item?.photo
+                              ? item?.photo
                               : 'https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg',
                           }}
                           style={{
@@ -196,7 +211,7 @@ const GroupCreation = ({navigation}) => {
                             marginLeft: '5%',
                             color: '#000',
                           }}>
-                          {item?.name}
+                          {item?.firstName + '\b' + item?.lastName}
                         </Text>
                         <Text
                           style={{
@@ -204,30 +219,35 @@ const GroupCreation = ({navigation}) => {
                             marginLeft: '5%',
                             color: '#000',
                           }}>
-                          {item?.number}
+                          {item?.phoneNumber}
                         </Text>
                       </View>
                       <View>
                         <TouchableOpacity
                           onPress={() => {
-                            if (selectedName.includes(item?.name)) {
-                              setSelectedName(
-                                selectedName.filter(
-                                  value => value !== item?.name,
-                                ),
-                              );
-                            } else {
+                              if((selectedName.includes(item?.userId))){
+                                setSelectedName(
+                                  selectedName.filter(
+                                    value => value !== item?.userId
+                                  ),
+                                  );
+                                  console.log("bi", selectedName)
+                              }
+                             else {
                               setSelectedName([
-                                ...new Set([...selectedName, item?.name]),
+                                ...new Set([...selectedName, item?.userId]),
                               ]);
+                              console.log("se", selectedName)
                             }
                           }}>
-                          {/* {console.log("sele", selectedName)} */}
+                          {/* {console.log("sele", name)} */}
                           <View
-                            key={item?.id}
+                            key={item?.userId}
                             style={{
                               borderRadius: 100 / 2,
-                              backgroundColor: selectedName.includes(item.name)
+                              backgroundColor: selectedName.includes(
+                                item.userId,
+                              )
                                 ? '#5d6aff'
                                 : '#B5B9DD',
                               height: 30,
@@ -275,6 +295,7 @@ const GroupCreation = ({navigation}) => {
             marginBottom: '5%',
           }}>
           <TouchableOpacity
+          onPress={()=>onSubmit()}
             style={{
               // backgroundColor: '#000',
               width: '40%',
@@ -364,6 +385,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 45,
+    color: '#000',
     backgroundColor: '#fff',
     marginTop: '10%',
     // marginLeft: '10'
@@ -439,7 +461,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     fontSize: 14,
     color: '#fff',
-    padding:5,
+    padding: 5,
     textAlign: 'center',
     alignSelf: 'center',
     // width: '40%',

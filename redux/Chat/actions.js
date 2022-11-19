@@ -4,7 +4,9 @@ import {
     CHATLIST_SUCCESS,
     CHATLIST_FAILURE,
     FETCH_CHATLIST_BY__USER_ID,
-    GET_ALL_MESSAGE_BY_CHAT_ID
+    GET_CONTACTS,
+    GET_ALL_MESSAGE_BY_CHAT_ID,
+    CREATE_GROUP
 } from "./actionTypes";
 import io from 'socket.io-client'
 var socket, selectedChatCompare;
@@ -24,17 +26,18 @@ export const reqFailure = (error) => ({
     error: error,
 });
 
-
-
+export const reqContacts = (data) => ({
+  type: GET_CONTACTS,
+  data
+});
+export const createGroup = (data) => ({
+  type: CREATE_GROUP,
+  data
+});
 export const reqChatListByUserId = (id) => ({
     type: FETCH_CHATLIST_BY__USER_ID,
     id: id,
 });
-
-// export const MessageByChatId =(data)=>({
-//     type: GET_ALL_MESSAGE_BY_CHAT_ID,
-//     data
-// })
 
 
 export const getAllChatListByUserId = (id, privateChat, groupChat) => {
@@ -66,22 +69,51 @@ export const getAllChatListByUserId = (id, privateChat, groupChat) => {
             console.log(err.response.status);
             dispatch(reqFailure(err.message));
           }
-        // axios
-        //     .get(`https://frisles.herokuapp.com//api/chat/list/user/${id}?isPrivateList=true`)
-        //     .then((response) => {
-        //         console.log("COMPLETE RESPONSE DATA: ", response.data);
-        //         if (response.status) {
-        //             dispatch(reqSuccess(response.data));
-        //         } else {
-        //             dispatch(reqFailure("Error getting Chat list by user id"));
-        //             console.log(
-        //                 "Something's not right! Please try again after some time."
-        //             );
-        //         }
-        //     })
-        //     .catch((err) => {
-        //         dispatch(reqFailure(err.message));
-        //     });
     };
 }
 
+export const getContact = (arr) => {
+  return async (dispatch) => {
+      dispatch(req());
+      try {
+          console.log("arr at action",arr)
+            const response = await axios.post(
+              `https://frisles.herokuapp.com/api/user/list/details`,
+              {
+                contacts: arr
+              },
+            );
+            console.log("response", response.data)
+              dispatch(reqContacts(response.data));
+              // console.log("today", response.data)
+      }catch (err) {
+          console.log('REQUEST FAILED');
+          console.log(err.response.status);
+          dispatch(reqFailure(err.message));
+        }
+  };
+}
+
+export const groupCreate = (chatName, userChat) => {
+  return async (dispatch) => {
+      dispatch(req());
+      try {
+          console.log("arr at action",chatName, userChat)
+            const response = await axios.post(
+              `https://frisles.herokuapp.com/api/chat?userId=3ac1df80-5a6e-11ed-a871-7d8265a60df7`,
+              {
+                chatName: chatName,
+                isGroupChat: true,
+                userChat: userChat
+              },
+            );
+            console.log("response", response.data)
+              dispatch(createGroup(response.data));
+              // console.log("today", response.data)
+      }catch (err) {
+          console.log('REQUEST FAILED');
+          console.log(err.response.status);
+          dispatch(reqFailure(err.message));
+        }
+  };
+}

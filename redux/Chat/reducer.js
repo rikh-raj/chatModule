@@ -3,7 +3,8 @@ import {
     CHATLIST_SUCCESS,
     CHATLIST_FAILURE,
     FETCH_CHATLIST_BY__USER_ID,
-    GET_ALL_MESSAGE_BY_CHAT_ID
+    GET_CONTACTS,
+    CREATE_GROUP
 } from "./actionTypes";
 
 //Initial state///
@@ -11,7 +12,8 @@ import {
 const initialState = {
     loading: false,
     data: [],
-    msg: []
+    contacts: [],
+    group: []
 };
 
 
@@ -43,15 +45,23 @@ const chatReducer = (state = initialState, action) => {
                 loading: false,
             };
         }
-
-        case GET_ALL_MESSAGE_BY_CHAT_ID: {
-            console.log("Successfully Got MESSAGE by CHAT id");
-            return {
+        case GET_CONTACTS: {
+            console.log("got contacts", action.data)
+            return{
                 ...state,
-                msg: action.data,
-                error: "",
-                loading: false,
-            };
+                contacts: action.data,
+                error: '',
+                loading: false
+            }
+        }
+        case CREATE_GROUP: {
+            console.log("got contacts", action.data)
+            return{
+                ...state,
+                group: action.data,
+                error: '',
+                loading: false
+            }
         }
         case CHATLIST_FAILURE: {
             return {
