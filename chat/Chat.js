@@ -39,7 +39,7 @@ const [refresh, setRefresh]=useState(false)
 
 
   // }, []);
-const authId= "3ac1df80-5a6e-11ed-a871-7d8265a60df7"
+const authId= "6dddae20-5925-11ed-a555-c9afc10124e6"
   useFocusEffect(
     useCallback(()=>{
       if(navigation.isFocused()){

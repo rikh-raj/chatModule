@@ -52,14 +52,14 @@ const GroupChat = ({navigation, route}) => {
 
 }
 let user =  {
-  "userId": "3ac1df80-5a6e-11ed-a871-7d8265a60df7",
-  "firstName": "Andalib",
-  "lastName": "Quraishi",
-  "photo": "https://assets.vogue.in/photos/622f9af651da11b2e5b0b176/master/pass/7%20times%20Alia%20Bhatt%20served%20sublime%20beauty%20moments%20.jpg",
+  "userId": "6dddae20-5925-11ed-a555-c9afc10124e6",
+  "firstName": "Danish",
+  "lastName": "ali",
+  "photo": "https://lh3.googleusercontent.com/a/ALm5wu2hz5IZkrOwKQLw8A8TaCp6rCl4IVi1XKTC8VzemA=s288-p-rw-no",
   "countryCode": "91",
-  "phoneNumber": "987654321",
-  "createdAt": "2022-11-02T05:21:39.705Z",
-  "updatedAt": "2022-11-02T05:21:39.705Z"
+  "phoneNumber": "7439240134",
+  "createdAt": "2022-10-31T14:08:01.029Z",
+  "updatedAt": "2022-11-03T05:37:14.544Z"
 }
 var endPoint = `https://frisles.herokuapp.com`
 
