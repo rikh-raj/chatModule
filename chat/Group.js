@@ -85,7 +85,10 @@ export default function Group({navigation}) {
             <ChatListItem
               id={index}
               name={item.chatName}
-              profileUrl={item.groupPhoto}
+              profileUrl={item.groupPhoto?
+                item.groupPhoto:
+                'https://cdn.vectorstock.com/i/preview-1x/26/28/group-of-people-icon-vector-15262628.webp'
+              }
               lastMessage={item.lastMessage}
               time={moment(item.lastMessageTime).format('hh:mm a')}
               unread={item.unreadMessages}

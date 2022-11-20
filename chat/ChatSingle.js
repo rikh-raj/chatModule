@@ -65,7 +65,7 @@ const ChatSingle = ({ navigation, route }) => {
         endPoint +
         `/api/message/chat/${chat.chatId}?userId=${authId}`,
       );
-      console.log("yo yo", response.data)
+      // console.log("yo yo", response.data)
       setMessages(response.data);
       setLoading(false);
 
@@ -83,7 +83,7 @@ const ChatSingle = ({ navigation, route }) => {
     socket.on("stop typing", () => setIsTyping(false));
     // getAllMessageByChatId()
     // eslint-disable-next-line
-  }, [socket]);
+  }, []);
   useEffect(() => {
     getMessagesByChatId()
     selectedChatCompare = chat
@@ -93,18 +93,23 @@ const ChatSingle = ({ navigation, route }) => {
     console.log("new msg",selectedChatCompare)
     socket.on("message recieved", (newMessageRecieved) => {
       if (
-        // !selectedChatCompare || // if chat is not selected or doesn't match current chat
-        // selectedChatCompare.chatId !== newMessageRecieved.chatId
-        newMessageRecieved
+        !selectedChatCompare || // if chat is not selected or doesn't match current chat
+        selectedChatCompare.chatId !== newMessageRecieved.chatId
+        // newMessageRecieved
       ) 
       {
-        
-        // setMessages([...messages,newMessageRecieved]);
-        messages.push(newMessageRecieved)
+        if (!notification.includes(newMessageRecieved)) {
+          setNotification([newMessageRecieved, ...notification]);
+          setFetchAgain(!fetchAgain);
+        }
+      }
+      else {
+        setMessages([...messages, newMessageRecieved]);
+        console.log("new msg", newMessageRecieved)
       }
       console.log("new msg inside ", newMessageRecieved)
     });
-  },[messages,socket]);
+  },[]);
   // console.log("time", moment().toISOString())
 // console.log("old msg", messages)
   const typingHandler = (event) => {
@@ -146,16 +151,16 @@ const ChatSingle = ({ navigation, route }) => {
         ).then(async(response) => {
           if(response.status==200){
             // console.log("re", messages)
-            // console.log(response.data)
+            console.log(response.data)
             await socket.emit("new message", response.data);
 
-            await messages.push(response.data)
+            // await messages.push(response.data)
+            setMessages([...messages, response.data]);
             
           }
         })
         
         
-        // setMessages([...messages, response.data]);
       } catch (error) {
         console.log("error at send message", error.response.status)
         Alert.alert("error of send message")
