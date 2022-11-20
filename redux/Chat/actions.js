@@ -6,7 +6,8 @@ import {
     FETCH_CHATLIST_BY__USER_ID,
     GET_CONTACTS,
     GET_ALL_MESSAGE_BY_CHAT_ID,
-    CREATE_GROUP
+    CREATE_GROUP,
+    GET_ALL_GROUPDETAILS_BY_CHAT_ID
 } from "./actionTypes";
 import io from 'socket.io-client'
 var socket, selectedChatCompare;
@@ -32,6 +33,10 @@ export const reqContacts = (data) => ({
 });
 export const createGroup = (data) => ({
   type: CREATE_GROUP,
+  data
+});
+export const groupByChatId = (data) => ({
+  type: GET_ALL_GROUPDETAILS_BY_CHAT_ID,
   data
 });
 export const reqChatListByUserId = (id) => ({
@@ -110,6 +115,26 @@ export const groupCreate = (chatName, userChat) => {
             console.log("response", response.data)
               dispatch(createGroup(response.data));
               // console.log("today", response.data)
+      }catch (err) {
+          console.log('REQUEST FAILED');
+          console.log(err.response.status);
+          dispatch(reqFailure(err.message));
+        }
+  };
+}
+
+export const getGroupDetailsbyChatId = (id) => {
+  return async (dispatch) => {
+      dispatch(req());
+      try {
+          console.log("group chat", id)
+            const response = await axios.get(
+              `https://frisles.herokuapp.com/api/chat/${id}/details`,
+            );
+            if (response.status) {
+              dispatch(groupByChatId(response.data));
+              // console.log("today", response.data)
+            }
       }catch (err) {
           console.log('REQUEST FAILED');
           console.log(err.response.status);

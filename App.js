@@ -18,7 +18,7 @@ import store from './redux/store';
 import ChatHome from './chat/Home/index'
 import ChatSingle from './chat/ChatSingle';
 import GroupCreation from './chat/GroupCreation';
-import EditGroup from './chat/EditGroup'
+import GroupDetails from './chat/GroupDetails'
 import CallNow from './chat/CallNow';
 import GroupChat from './chat/GroupChat';
 import AllContacts from './chat/AllContacts';
@@ -44,7 +44,7 @@ const App = () => {
          <Stack.Screen name="chatsingle" component={ChatSingle} />
          <Stack.Screen name="groupCreation" component={GroupCreation} />
          <Stack.Screen name="groupChat" component={GroupChat} />
-       <Stack.Screen name="groupEdit" component={EditGroup} />
+       <Stack.Screen name="groupDetails" component={GroupDetails} />
        <Stack.Screen name="callNow" component={CallNow} />  
        <Stack.Screen name='allContacts' component={AllContacts}/>
       </Stack.Navigator>

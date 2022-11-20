@@ -101,11 +101,12 @@ useEffect(() => {
   return (
     <View style={styles.container}>
         <ChatHeader
+
           name={group.chatName}
           profilePic={{uri:group.groupPhoto}}
           number={group.users.map((i)=>i.phoneNumber + ",")}
           navigation={navigation}
-          onPressName={()=>navigation.navigate('groupEdit')}
+          onPressName={()=>navigation.navigate('groupDetails',{chatId: group.chatId})}
         />
       <ScrollView>
         {messages.map(item => {

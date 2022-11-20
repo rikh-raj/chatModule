@@ -4,7 +4,8 @@ import {
     CHATLIST_FAILURE,
     FETCH_CHATLIST_BY__USER_ID,
     GET_CONTACTS,
-    CREATE_GROUP
+    CREATE_GROUP,
+    GET_ALL_GROUPDETAILS_BY_CHAT_ID
 } from "./actionTypes";
 
 //Initial state///
@@ -46,7 +47,7 @@ const chatReducer = (state = initialState, action) => {
             };
         }
         case GET_CONTACTS: {
-            console.log("got contacts", action.data)
+            // console.log("got contacts", action.data)
             return{
                 ...state,
                 contacts: action.data,
@@ -55,10 +56,19 @@ const chatReducer = (state = initialState, action) => {
             }
         }
         case CREATE_GROUP: {
-            console.log("got contacts", action.data)
+            // console.log("group create", action.data)
             return{
                 ...state,
                 group: action.data,
+                error: '',
+                loading: false
+            }
+        }
+        case GET_ALL_GROUPDETAILS_BY_CHAT_ID: {
+            // console.log("group details", action.data)
+            return{
+                ...state,
+                data: action.data,
                 error: '',
                 loading: false
             }
