@@ -97,6 +97,84 @@ useEffect(() => {
 useEffect(() => {
   getMessagesByChatId()
 }, [group.chatId])
+useEffect(() => {
+  console.log("new msg",selectedChatCompare)
+  socket.on("message recieved", (newMessageRecieved) => {
+    if (
+      !selectedChatCompare || // if chat is not selected or doesn't match current chat
+      selectedChatCompare.chatId !== newMessageRecieved.chatId
+      // newMessageRecieved
+    ) 
+    {
+      if (!notification.includes(newMessageRecieved)) {
+        setNotification([newMessageRecieved, ...notification]);
+        setFetchAgain(!fetchAgain);
+      }
+    }
+    else {
+      setMessages([...messages, newMessageRecieved]);
+      console.log("new msg", newMessageRecieved)
+    }
+    console.log("new msg inside ", newMessageRecieved)
+  });
+},[]);
+// console.log("time", moment().toISOString())
+// console.log("old msg", messages)
+const typingHandler = (event) => {
+  setNewMessage(event);
+  console.log(event)
+  if (!socketConnected) return;
+
+  if (!typing) {
+    setTyping(true);
+    socket.emit("typing", group.chatId);
+  }
+  let lastTypingTime = new Date().getTime();
+  var timerLength = 3000;
+  setTimeout(() => {
+    var timeNow = new Date().getTime();
+    var timeDiff = timeNow - lastTypingTime;
+    if (timeDiff >= timerLength && typing) {
+      socket.emit("stop typing", group.chatId);
+      setTyping(false);
+    }
+  }, timerLength);
+};
+const sendMessage = async (event) => {
+  // console.log("event",event.nativeEvent)
+  if (newMessage) {
+    socket.emit("stop typing", group.chatId);
+    try {
+      setNewMessage("");
+      await axios.post(
+        endPoint +
+        `/api/message/chat/${group.chatId}/user/${authId}`,
+        {
+          content: newMessage,
+          createdAt: moment().toISOString(),
+          firstName: user.firstName,
+          lastName: user.lastName,
+          photo: user.photo
+        },
+      ).then(async(response) => {
+        if(response.status==200){
+          // console.log("re", messages)
+          console.log(response.data)
+          await socket.emit("new message", response.data);
+
+          // await messages.push(response.data)
+          setMessages([...messages, response.data]);
+          
+        }
+      })
+      
+      
+    } catch (error) {
+      console.log("error at send message", error.response.status)
+      Alert.alert("error of send message")
+    }
+  }
+};
 // console.log("first",messages)
   return (
     <View style={styles.container}>
@@ -115,6 +193,7 @@ useEffect(() => {
             navigation={navigation}
             // receiverUsername={item?.data?.firstName +'\b'+ item?.data?.lastName}
             // receiverMessage={item?.data?.content}
+            send={item?.data?.userId}
             isSender={item?.isSender}
             pic={{uri: item?.data?.photo}}
             username={item?.data?.firstName +'\b'+ item?.data?.lastName}
@@ -126,9 +205,12 @@ useEffect(() => {
       </ScrollView>
       <View style={{backgroundColor: 'white',width: windowWidth/1, height: 60}}>
         <View style={styles.inputView}>
-          <TextInput style={styles.input} 
-          placeholderTextColor="#000"
-          placeholder='Type here'
+        <TextInput style={styles.input}
+            placeholderTextColor='#000'
+            placeholder='Type here'
+            value={newMessage}
+            onChangeText={(e) => typingHandler(e)}
+            // onKeyPress={sendMessage}
           />
           <TouchableOpacity style={styles.emoticon}>
           <Image
@@ -142,7 +224,7 @@ useEffect(() => {
           style={{height: 27, width: 27, marginTop: '19%',marginLeft: '7%',}}
           />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.emoticon} onPress={() =>console.log("object")}>
+            <TouchableOpacity style={styles.emoticon} onPress={() =>sendMessage()}>
             <Feather name='send' size={22} color='#5d6afe' 
             // style={styles.emoticon} onPress={()=> sendMessage()}
             />
