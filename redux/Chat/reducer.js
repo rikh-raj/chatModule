@@ -5,7 +5,9 @@ import {
     FETCH_CHATLIST_BY__USER_ID,
     GET_CONTACTS,
     CREATE_GROUP,
-    GET_ALL_GROUPDETAILS_BY_CHAT_ID
+    GET_ALL_GROUPDETAILS_BY_CHAT_ID,
+    EXIT_GROUP,
+    CLEAR_CHAT
 } from "./actionTypes";
 
 //Initial state///
@@ -14,7 +16,9 @@ const initialState = {
     loading: false,
     data: [],
     contacts: [],
-    group: []
+    group: [],
+    exitGroup:[],
+    clearChat: []
 };
 
 
@@ -80,6 +84,22 @@ const chatReducer = (state = initialState, action) => {
                 error: action.error,
                 loading: false,
             };
+        }
+        case EXIT_GROUP:{
+            return{
+                ...state,
+                exitGroup: action.data,
+                error: '',
+                loading: false
+            }
+        }
+        case CLEAR_CHAT:{
+            return{
+                ...state,
+                clearChat: action.data,
+                error: '',
+                loading: false
+            }
         }
         default:
             return state;

@@ -15,7 +15,7 @@ export default function Group({navigation}) {
   const [contacts, setContacts] = useState([]);
   const [groupChat, setGroupchat] = useState(true);
   const dispatch = useDispatch();
-  const authId = '3ac1df80-5a6e-11ed-a871-7d8265a60df7';
+const authId= "3ac1df80-5a6e-11ed-a871-7d8265a60df7"
   useFocusEffect(
     useCallback(() => {
       if (navigation.isFocused()) {

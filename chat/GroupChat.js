@@ -57,7 +57,7 @@ let user =  {
   "lastName": "Quraishi",
   "photo": "https://assets.vogue.in/photos/622f9af651da11b2e5b0b176/master/pass/7%20times%20Alia%20Bhatt%20served%20sublime%20beauty%20moments%20.jpg",
   "countryCode": "91",
-  "phoneNumber": "987654321",
+  "phoneNumber": "9748121112",
   "createdAt": "2022-11-02T05:21:39.705Z",
   "updatedAt": "2022-11-02T05:21:39.705Z"
 }
