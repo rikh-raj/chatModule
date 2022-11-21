@@ -77,7 +77,7 @@ export const getAllChatListByUserId = (id, privateChat, groupChat) => {
     };
 }
 
-export const getContact = (arr) => {
+export const  getContact = (arr) => {
   return async (dispatch) => {
       dispatch(req());
       try {

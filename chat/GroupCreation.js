@@ -171,9 +171,12 @@ const GroupCreation = ({navigation}) => {
             data={filteredData}
             keyExtractor={item => item?.userId}
             renderItem={({item}) => {
+              // {console.log("null check", item?.userId==null? 'null': 'not null')}
               return (
                 <View>
                   {/* <ScrollView> */}
+                  {item?.userId==null?
+                  null:
                   <View
                     style={{
                       flex: 1,
@@ -271,6 +274,7 @@ const GroupCreation = ({navigation}) => {
                       </View>
                     </View>
                   </View>
+                }
                   {/* </ScrollView> */}
                 </View>
               );

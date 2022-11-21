@@ -6,6 +6,10 @@ import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
  
 import PropTypes from 'prop-types';
 import Avatar from './Avatar';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {getContact} from '../../redux/Chat/actions';
+
  
 const getAvatarInitials = (textString) => {
   if (!textString) return '';
@@ -18,13 +22,25 @@ const getAvatarInitials = (textString) => {
 };
  
 const ContactList = (props) => {
+  const chatState = useSelector((state)=>state.chatState)
+  const dispatch = useDispatch()
   const shouldComponentUpdate = () => {
     return false;
   };
   const {item, onPress} = props;
+  console.log("item", chatState.contacts)
+  // let arr = [];
+  // for (let i = 0; i < contacts.length; i++) {
+  //   const element = contacts[i];
+  //   let value = (element[0] || '').replace(/\D/g, '').slice(-10);
+  //   arr.push(value);
+  // }
+  // useEffect(()=>{
+  //   dispatch(getContact(arr));
+  // },[dispatch])
   return (
     <View>
-      <TouchableOpacity onPress={() => onPress(item)}>
+      <TouchableOpacity onPress={() => console.log("first")}>
         <View style={styles.itemContainer}>
           <View style={styles.leftElementContainer}>
             <Avatar
