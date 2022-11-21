@@ -10,12 +10,12 @@ import {
   ScrollView,
   ImageBackground,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SearchBar from 'react-native-dynamic-search-bar';
-import {useEffect} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {getGroupDetailsbyChatId} from '../redux/Chat/actions';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearMessages, exitGroupChat, getGroupDetailsbyChatId } from '../redux/Chat/actions';
 
 const data = [
   {
@@ -68,203 +68,217 @@ const data = [
   },
 ];
 
-export default function GroupDetails({navigation, route}) {
-  const {chatId} = route.params;
-  const chatState = useSelector((state)=> state.chatState)
+export default function GroupDetails({ navigation, route }) {
+  const { chatId } = route.params;
+  const chatState = useSelector((state) => state.chatState)
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const authId = "6dddae20-5925-11ed-a555-c9afc10124e6"
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getGroupDetailsbyChatId(chatId));
   }, [dispatch]);
+  // useEffect((chatId, authId) => {
+  // console.log("ddddddddddddd", chatId, authId)
+  function exit() {
+
+    dispatch(exitGroupChat(chatId, authId));
+    navigation.navigate('chat')
+  }
+  function clearMessage() {
+    console.log("inside function", chatId)
+    dispatch(clearMessages(chatId));
+
+  }
+  // }, [dispatch]);
   return (
     <View style={styles.container}>
       <ScrollView>
         {/* <ScrollView> */}
-        {chatState.data.map((item)=>{
-          return(
+        {chatState.data.map((item) => {
+          return (
             <View>
-        <ImageBackground
-          source={require('../assets/images/home-top-bg.png')}
-          resizeMode="cover"
-          style={styles.topContainer}>
-          <View style={styles.header}>
-            <View style={styles.icon}>
-              <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Image source={require('../assets/icons/png/backButton.png')} />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.iconView}>
-              <Image
-              style={styles.iconImage}
-              source={{
-                uri: item?.groupPhoto?
-                item?.groupPhoto:
-                'https://cdn.vectorstock.com/i/preview-1x/26/28/group-of-people-icon-vector-15262628.webp'
-              }}
-              />
-              {/* <View style={styles.edit}></View> */}
-            </View>
-            <Image
-              source={require('../assets/icons/png/actions.png')}
-              style={styles.moreOption}
-            />
-          </View>
-          <View style={{flexDirection: 'row', alignSelf: 'center'}}>
-            <Text style={styles.groupName}>{item?.chatName}</Text>
-            <TouchableOpacity style={{marginTop: '5%', marginLeft: '3%'}}>
-              <Image
-                source={require('../assets/icons/png/pencil.png')}
-                style={{
-                  height: 20,
-                  width: 16,
-                  marginTop: '30%',
-                  alignSelf: 'center',
-                }}
-              />
-            </TouchableOpacity>
-          </View>
-          <View>
-            <Text style={styles.groupNo}>Group.{item?.users.length}participant</Text>
-          </View>
-        </ImageBackground>
-        <View style={{flexDirection: 'row'}}>
-          <View>
-            <SearchBar
-              placeholder="Search Group"
-              onPress={() => alert('onPress')}
-              style={styles.searchbar}
-              onChangeText={text => console.log(text)}
-            />
-          </View>
-          <TouchableOpacity
-            style={{
-              marginTop: '7%',
-              height: 45,
-              width: 45,
-              backgroundColor: '#5d6aff',
-              elevation: 5,
-              shadowColor: 'grey',
-              borderRadius: 100 / 2,
-            }}>
-            <Image
-              source={require('../assets/icons/png/plus.png')}
-              style={{
-                height: 20,
-                width: 20,
-                marginTop: '30%',
-                alignSelf: 'center',
-              }}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.elevationView}>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={styles.message}>Mute Notification</Text>
-            <Switch
-              trackColor={{false: '#767577', true: '#5d6aff'}}
-              thumbColor={isEnabled ? '#fff' : '#fff'}
-              style={{
-                marginLeft: '30%',
-              }}
-              // ios_backgroundColor="#3e3e3e"
-              onValueChange={toggleSwitch}
-              value={isEnabled}
-            />
-          </View>
-        </View>
-        <View style={styles.elevationView}>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={styles.message}>Group Call</Text>
-            <TouchableOpacity style={styles.call}>
-              <Image
-                source={require('../assets/icons/png/call-icon.png')}
-                style={{
-                  height: 35,
-                  width: 35,
-                  alignSelf: 'center',
-                }}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.elevationView2}>
-          <FlatList
-            // style={{ flex: 1 }}
-            data={chatState.data[0].users}
-            keyExtractor={item => item?.id}
-            renderItem={({item}) => {
-              return (
-                <View>
-                  {/* <ScrollView> */}
-                  <View
-                    style={{
-                      flex: 1,
-                      backgroundColor: '#fff',
-                      justifyContent: 'center',
-                      marginTop: '5%',
-                      borderBottomColor: '#cacaca',
-                      borderBottomWidth: 1,
-                      width: windowWidth / 1.3,
-                      alignSelf: 'center',
-                    }}>
-                    <View style={{flexDirection: 'row'}}>
-                      <View>
-                        <Image
-                          source={{
-                            uri: item?.photo
-                              ? item?.photo
-                              : 'https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg',
-                          }}
-                          style={{
-                            // backgroundColor: 'black',
-                            marginTop: '10%',
-                            marginLeft: '5%',
-                            marginBottom: '10%',
-                            height: 50,
-                            width: 50,
-                            borderRadius: 100 / 2,
-                          }}
-                        />
-                      </View>
-                      <View>
-                        <Text
-                          style={{
-                            marginTop: '5%',
-                            marginLeft: '5%',
-                            color: '#000',
-                          }}>
-                          {item?.firstName + '\b' + item?.lastName}
-                        </Text>
-                        <Text
-                          style={{
-                            marginTop: '5%',
-                            marginLeft: '5%',
-                            color: '#000',
-                          }}>
-                          {item?.phoneNumber}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          marginTop: '5%',
-                          marginLeft: '30%',
-                        }}>
-                        <Text
-                          style={{
-                            color: '#636DD9',
-                          }}>
-                          {item?.isAdmin ? 'Admin' : null}
-                        </Text>
-                      </View>
-                    </View>
+              <ImageBackground
+                source={require('../assets/images/home-top-bg.png')}
+                resizeMode="cover"
+                style={styles.topContainer}>
+                <View style={styles.header}>
+                  <View style={styles.icon}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                      <Image source={require('../assets/icons/png/backButton.png')} />
+                    </TouchableOpacity>
                   </View>
-                  {/* </ScrollView> */}
+                  <View style={styles.iconView}>
+                    <Image
+                      style={styles.iconImage}
+                      source={{
+                        uri: item?.groupPhoto ?
+                          item?.groupPhoto :
+                          'https://cdn.vectorstock.com/i/preview-1x/26/28/group-of-people-icon-vector-15262628.webp'
+                      }}
+                    />
+                    {/* <View style={styles.edit}></View> */}
+                  </View>
+                  <Image
+                    source={require('../assets/icons/png/actions.png')}
+                    style={styles.moreOption}
+                  />
                 </View>
-              );
-            }}
-          />
-        </View>
+                <View style={{ flexDirection: 'row', alignSelf: 'center' }}>
+                  <Text style={styles.groupName}>{item?.chatName}</Text>
+                  <TouchableOpacity style={{ marginTop: '5%', marginLeft: '3%' }}>
+                    <Image
+                      source={require('../assets/icons/png/pencil.png')}
+                      style={{
+                        height: 20,
+                        width: 16,
+                        marginTop: '30%',
+                        alignSelf: 'center',
+                      }}
+                    />
+                  </TouchableOpacity>
+                </View>
+                <View>
+                  <Text style={styles.groupNo}>Group.{item?.users.length}participant</Text>
+                </View>
+              </ImageBackground>
+              <View style={{ flexDirection: 'row' }}>
+                <View>
+                  <SearchBar
+                    placeholder="Search Group"
+                    onPress={() => alert('onPress')}
+                    style={styles.searchbar}
+                    onChangeText={text => console.log(text)}
+                  />
+                </View>
+                <TouchableOpacity
+                  style={{
+                    marginTop: '7%',
+                    height: 45,
+                    width: 45,
+                    backgroundColor: '#5d6aff',
+                    elevation: 5,
+                    shadowColor: 'grey',
+                    borderRadius: 100 / 2,
+                  }}>
+                  <Image
+                    source={require('../assets/icons/png/plus.png')}
+                    style={{
+                      height: 20,
+                      width: 20,
+                      marginTop: '30%',
+                      alignSelf: 'center',
+                    }}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.elevationView}>
+                <View style={{ flexDirection: 'row' }}>
+                  <Text style={styles.message}>Mute Notification</Text>
+                  <Switch
+                    trackColor={{ false: '#767577', true: '#5d6aff' }}
+                    thumbColor={isEnabled ? '#fff' : '#fff'}
+                    style={{
+                      marginLeft: '30%',
+                    }}
+                    // ios_backgroundColor="#3e3e3e"
+                    onValueChange={toggleSwitch}
+                    value={isEnabled}
+                  />
+                </View>
+              </View>
+              <View style={styles.elevationView}>
+                <View style={{ flexDirection: 'row' }}>
+                  <Text style={styles.message}>Group Call</Text>
+                  <TouchableOpacity style={styles.call}>
+                    <Image
+                      source={require('../assets/icons/png/call-icon.png')}
+                      style={{
+                        height: 35,
+                        width: 35,
+                        alignSelf: 'center',
+                      }}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View style={styles.elevationView2}>
+                <FlatList
+                  // style={{ flex: 1 }}
+                  data={chatState.data[0].users}
+                  keyExtractor={item => item?.id}
+                  renderItem={({ item }) => {
+                    return (
+                      <View>
+                        {/* <ScrollView> */}
+                        <View
+                          style={{
+                            flex: 1,
+                            backgroundColor: '#fff',
+                            justifyContent: 'center',
+                            marginTop: '5%',
+                            borderBottomColor: '#cacaca',
+                            borderBottomWidth: 1,
+                            width: windowWidth / 1.3,
+                            alignSelf: 'center',
+                          }}>
+                          <View style={{ flexDirection: 'row' }}>
+                            <View>
+                              <Image
+                                source={{
+                                  uri: item?.photo
+                                    ? item?.photo
+                                    : 'https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg',
+                                }}
+                                style={{
+                                  // backgroundColor: 'black',
+                                  marginTop: '10%',
+                                  marginLeft: '5%',
+                                  marginBottom: '10%',
+                                  height: 50,
+                                  width: 50,
+                                  borderRadius: 100 / 2,
+                                }}
+                              />
+                            </View>
+                            <View>
+                              <Text
+                                style={{
+                                  marginTop: '5%',
+                                  marginLeft: '5%',
+                                  color: '#000',
+                                }}>
+                                {item?.firstName + '\b' + item?.lastName}
+                              </Text>
+                              <Text
+                                style={{
+                                  marginTop: '5%',
+                                  marginLeft: '5%',
+                                  color: '#000',
+                                }}>
+                                {item?.phoneNumber}
+                              </Text>
+                            </View>
+                            <View
+                              style={{
+                                marginTop: '5%',
+                                marginLeft: '30%',
+                              }}>
+                              <Text
+                                style={{
+                                  color: '#636DD9',
+                                }}>
+                                {item?.isAdmin ? 'Admin' : null}
+                              </Text>
+                            </View>
+                          </View>
+                        </View>
+                        {/* </ScrollView> */}
+                      </View>
+                    );
+                  }}
+                />
+              </View>
             </View>
           )
         })}
@@ -288,14 +302,14 @@ export default function GroupDetails({navigation, route}) {
               Export Chat
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={{padding: 10}}>
+          <TouchableOpacity style={{ padding: 10 }}>
             <Text
               style={{
                 padding: 10,
                 fontSize: 16,
                 // marginLeft:'5%',
                 color: 'red',
-              }}>
+              }} onPress={() => clearMessage()}>
               Clear Chat
             </Text>
           </TouchableOpacity>
@@ -332,7 +346,7 @@ export default function GroupDetails({navigation, route}) {
               textAlign: 'left',
               color: '#fff',
               fontWeight: '500',
-            }}>
+            }} onPress={() => exit()}>
             Exit Group
           </Text>
         </TouchableOpacity>
